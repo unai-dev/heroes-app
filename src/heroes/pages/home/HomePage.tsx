@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Heart } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CustomJumbotron } from "@/components/custom/CustomJumbotron";
@@ -7,11 +8,23 @@ import { HeroStats } from "@/heroes/components/HeroStats";
 import { HeroGrid } from "@/heroes/components/HeroGrid";
 import { CustomPagination } from "@/components/custom/CustomPagination";
 import { CustomBreadcrumb } from "@/components/custom/CustomBreadcrumb";
+import { getHeroesByPageAction } from "@/heroes/actions/get-heroes-by-page.action";
 
 type activeTabState = "all" | "favorites" | "heroes" | "villains";
 
 export const HomePage = () => {
   const [activeTab, setActiveTab] = useState<activeTabState>("all");
+
+  /**
+   * Use library tanStackQuery for request http
+   */
+  const { data } = useQuery({
+    queryKey: ["heroes"],
+    queryFn: () => getHeroesByPageAction(),
+    staleTime: 50000, // 5 minutes
+  });
+
+  console.log({ data });
 
   return (
     <>
