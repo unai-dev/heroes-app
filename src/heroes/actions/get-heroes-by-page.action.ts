@@ -7,7 +7,8 @@ import type { HeroesResponse } from "../types/get-heroes.response";
  */
 export const getHeroesByPageAction = async (
   page: number,
-  limit: number = 6
+  limit: number = 6,
+  category: string = "all"
 ): Promise<HeroesResponse> => {
   /**
    * Validations NaN
@@ -19,6 +20,7 @@ export const getHeroesByPageAction = async (
     params: {
       limit: limit,
       offset: (page - 1) * limit,
+      category: category,
     },
   });
 
