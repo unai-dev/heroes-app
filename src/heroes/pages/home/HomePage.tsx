@@ -9,10 +9,14 @@ import { CustomPagination } from "@/components/custom/CustomPagination";
 import { useSummary } from "@/heroes/hooks/useSummary";
 import { usePaginated } from "@/heroes/hooks/usePaginated";
 import { useHomePage } from "@/heroes/hooks/useHomePage";
+import { use } from "react";
+import { FavoriteHeroContext } from "@/heroes/context/FavoriteHeroContext";
 
 export const HomePage = () => {
-  const { limit, page, selectedTabs, category, setSearchParams } =
+  const { limit, page, selectedTabs, category, activeTab, setSearchParams } =
     useHomePage();
+
+  const { favoriteCount, favorites } = use(FavoriteHeroContext);
 
   /**
    * Use library tanStackQuery for request http
@@ -53,6 +57,7 @@ export const HomePage = () => {
             onClick={() =>
               setSearchParams((prev) => {
                 prev.set("tab", "favorites");
+                prev.set("category", "favorites");
                 return prev;
               })
             }
@@ -60,7 +65,7 @@ export const HomePage = () => {
             className="flex items-center gap-2"
           >
             <Heart className="h-4 w-4" />
-            Favorites (3)
+            Favorites ({favoriteCount})
           </TabsTrigger>
 
           <TabsTrigger
@@ -99,7 +104,7 @@ export const HomePage = () => {
 
         <TabsContent value="favorites">
           {/* Mostrar todos los personajes favoritos */}
-          <HeroGrid heroes={heroesResponse?.heroes ?? []} />
+          <HeroGrid heroes={favorites} />
         </TabsContent>
 
         <TabsContent value="heroes">
@@ -114,7 +119,9 @@ export const HomePage = () => {
       </Tabs>
 
       {/* Pagination */}
-      <CustomPagination totalPages={heroesResponse?.pages ?? 1} />
+      {activeTab !== "favorites" && (
+        <CustomPagination totalPages={heroesResponse?.pages ?? 1} />
+      )}
     </>
   );
 };
